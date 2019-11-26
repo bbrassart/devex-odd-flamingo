@@ -15,18 +15,15 @@ import data from '../../datasets/data.js';
 
 // Helpers
 import { getRelatedArticles } from '../../helpers/requests'
-
-const sfCoordinates = {
-  lng: -122.4376,
-  lat: 37.7577
-};
+import { generateHeatMapData } from "../../helpers/utils";
 
 class PulseContainer extends Component {
   constructor(props) {
     super(props);
     this.data = data;
+    this.heatMapData = generateHeatMapData(data);
     this.state = {
-      markerCoordinateArray: [sfCoordinates],
+      markerCoordinateArray: [],
       selectedResult: null,
       articles: [],
       relatedResults: {
@@ -65,7 +62,6 @@ class PulseContainer extends Component {
     const newsTopics = result.news_topics === undefined ? [] : result.news_topics.map(topic => topic.name.substring(5));
     const locations = result.locations === undefined ? [] : this.extractLocationsAsNames(result);
     let query = `page[size]=20&query=${encodeURIComponent([...locations].join('+'))}`;
-    console.log(newsTopics);
     newsTopics.forEach(topic => {
       query += `&filter[news_topics][]=${encodeURIComponent(topic)}`
     });
@@ -131,6 +127,7 @@ class PulseContainer extends Component {
           </Col>
           <Col>
             <Map
+              heatMapData={this.heatMapData}
               data={this.data}
               markerCoordinateArray={this.state.markerCoordinateArray}
               mapboxApiAccessToken={this.state.mapboxApiAccessToken}

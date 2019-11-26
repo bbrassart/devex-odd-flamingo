@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import ReactMapGL, { Marker } from 'react-map-gl';
+
+// Map tooling
+import ReactMapGL, { Marker, Source, Layer } from 'react-map-gl';
+import { heatmapLayer } from './map-style';
 
 // Markers
 import { ReactComponent as Icon } from './../../markers/marker.svg';
@@ -25,10 +28,15 @@ class Map extends Component {
     return (
       <ReactMapGL
         {...this.state.viewport}
-        mapStyle="mapbox://styles/mapbox/streets-v11"
+        mapStyle="mapbox://styles/mapbox/dark-v10"
         onViewportChange={(viewport) => this.setState({viewport})}
         mapboxApiAccessToken={this.props.mapboxApiAccessToken}
       >
+        { this.props.heatMapData && (
+          <Source type="geojson" data={this.props.heatMapData}>
+            <Layer {...heatmapLayer} />
+          </Source>
+        ) }
         {
           this.props.markerCoordinateArray.map((locations, index) => {
             return (
