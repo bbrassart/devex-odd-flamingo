@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import Map from '../Map/Map';
 import List from '../List/List';
 import RelatedResults from '../RelatedResults/RelatedResults';
-import RelatedArticles from '../RelatedArticles/RelatedArticles';
+import Articles from '../Articles/Articles';
 
 // Styling
 import Container from 'react-bootstrap/Container';
@@ -12,6 +12,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 // Data imports
 import data from '../../datasets/data.js';
+
+// Helpers
+import { getRelatedArticles } from '../../helpers/requests'
 
 const sfCoordinates = {
   lng: -122.4376,
@@ -25,7 +28,7 @@ class PulseContainer extends Component {
     this.state = {
       markerCoordinateArray: [sfCoordinates],
       selectedResult: null,
-      relatedArticles: [],
+      articles: [],
       relatedResults: {
         total: 0,
         data: []
@@ -58,6 +61,18 @@ class PulseContainer extends Component {
     return new Set(relatedResults);
   };
 
+  generateQueryParams(result) {
+    const newsTopics = result.news_topics === undefined ? [] : result.news_topics.map(topic => topic.name.substring(5));
+    const locations = result.locations === undefined ? [] : this.extractLocationsAsNames(result);
+    let query = `page[size]=20&query=${encodeURIComponent([...locations].join('+'))}`;
+    console.log(newsTopics);
+    newsTopics.forEach(topic => {
+      query += `&filter[news_topics][]=${encodeURIComponent(topic)}`
+    });
+    return query;
+  }
+
+
   createRelatedChunks(data) {
     const results = {};
     data.forEach(object => {
@@ -70,7 +85,7 @@ class PulseContainer extends Component {
     return results;
   };
 
-  setResult (result) {
+  async setResult(result) {
     let allLocationsAsArray =
       result.locations.length > 0 ? new Set(result.locations.map(loc => loc.location)) : [];
 
@@ -83,12 +98,11 @@ class PulseContainer extends Component {
 
     const finalRelatedResults = [...relatedResults];
 
-    const relatedArticles = [];
-
+    const articles = await getRelatedArticles(this.generateQueryParams(result));
 
     this.setState({
       selectedResult: result,
-      relatedArticles,
+      articles,
       relatedResults: {
         total: finalRelatedResults.length,
         data: this.createRelatedChunks(finalRelatedResults)
@@ -111,9 +125,9 @@ class PulseContainer extends Component {
             <RelatedResults
               data={this.state.relatedResults}>
             </RelatedResults>
-            <RelatedArticles
-              data={this.state.relatedArticles}>
-            </RelatedArticles>
+            <Articles
+              articles={this.state.articles}>
+            </Articles>
           </Col>
           <Col>
             <Map

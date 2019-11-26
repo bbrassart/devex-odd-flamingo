@@ -19,7 +19,7 @@ class Results extends Component {
       <div>
         <Badge className='mb-1' variant="secondary">All data</Badge>
         <div className='mt-2'>
-          <select onChange={this.handleChange} style={{width: this.selectWidth + 'px', 'font-size': '11px'}}>
+          <select onChange={this.handleChange} style={{width: this.selectWidth + 'px', fontSize: '11px'}}>
             { this.props.data.map((option, index) =>
               <option key={index} value={index}>
                 {option.title}
