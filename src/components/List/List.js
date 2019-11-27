@@ -9,7 +9,8 @@ class List extends Component {
       <div>
         <div className='mt-4'>
           <Results
-            setResult={this.props.setResult}
+            undoSelectedResult={this.props.undoSelectedResult}
+            selectResult={this.props.selectResult}
             selectedResult={this.props.selectedResult}
             data={this.props.data} />
         </div>

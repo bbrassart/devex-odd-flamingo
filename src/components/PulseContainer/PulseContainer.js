@@ -11,27 +11,32 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
+import './PulseContainer.css'
 // Data imports
 import data from '../../datasets/data.js';
 
 // Helpers
 import { getRelatedArticles } from '../../helpers/requests'
-import { processAllDataForHeatMap, processPartialDataForHeatMap } from "../../helpers/utils";
+import { getHeatMapData, processPartialDataForHeatMap } from "../../helpers/utils";
 
-const initialHeatMapData = processAllDataForHeatMap(data);
+const initialHeatMapData = getHeatMapData(data);
 
 class PulseContainer extends Component {
   constructor(props) {
     super(props);
-    this.formWidth = (window.innerWidth / 3);
     this.data = data;
     this.onNewsTopicsChange = this.onNewsTopicsChange.bind(this);
     this.onNewsTopicsSubmit = this.onNewsTopicsSubmit.bind(this);
+    this.onMaxDateChange = this.onMaxDateChange.bind(this);
+    this.onMinDateChange = this.onMinDateChange.bind(this);
+    this.onDateFilterSubmit = this.onDateFilterSubmit.bind(this);
     this.state = {
       markerCoordinateArray: [],
       selectedResult: null,
       articles: [],
       newsTopicsFilter: '',
+      maxDate: '',
+      minDate: '',
       heatMapData: initialHeatMapData,
       relatedResults: {
         total: 0,
@@ -40,6 +45,41 @@ class PulseContainer extends Component {
       locationNames: [],
       mapboxApiAccessToken: "pk.eyJ1IjoiYmJyYXNzYXJ0IiwiYSI6IjU2MTZjMjRmMjE2MmE4M2Q0OWEwMDVkYTc5YzM3M2Y3In0.V44T7lzZarK4_QwAwoEClw"
     };
+  }
+
+  onMaxDateChange(event) {
+    this.setState({maxDate: event.target.value});
+  }
+
+  onMinDateChange(event) {
+    this.setState({minDate: event.target.value});
+  }
+
+  onDateFilterSubmit(event) {
+    event.preventDefault();
+
+    const { maxDate, minDate } = this.state;
+
+    const filters = [{
+      publish_date: {
+        maxDate,
+        minDate
+      }
+    }]
+
+    this.setState({
+      markerCoordinateArray: [],
+      selectedResult: null,
+      articles: [],
+      relatedResults: {
+        total: 0,
+        data: []
+      },
+      newsTopicsFilter: '',
+      heatMapData: processPartialDataForHeatMap(this.data, filters),
+      locationNames: [],
+    });
+
   }
 
   onNewsTopicsChange(event) {
@@ -57,6 +97,8 @@ class PulseContainer extends Component {
         total: 0,
         data: []
       },
+      maxDate: '',
+      minDate: '',
       heatMapData: processPartialDataForHeatMap(this.data, filters),
       locationNames: [],
     });
@@ -111,48 +153,50 @@ class PulseContainer extends Component {
     return results;
   };
 
-  async setResult(result) {
-    if (result) {
-      let allLocationsAsArray =
-        result.locations.length > 0 ? new Set(result.locations.map(loc => loc.location)) : [];
+  undoSelectedResult() {
+    this.setState({
+      markerCoordinateArray: [],
+      selectedResult: null,
+      newsTopicsFilter: '',
+      articles: [],
+      relatedResults: {
+        total: 0,
+        data: []
+      },
+      heatMapData: initialHeatMapData,
+      locationNames: [],
+    });
+  }
 
-      const finalAllLocationsAsArray = [...allLocationsAsArray].filter(el => el != null);
+  async selectResult(result) {
+    let allLocationsAsArray =
+      result.locations.length > 0 ? new Set(result.locations.map(loc => loc.location)) : [];
 
-      let locationsForSelectedResult = this.extractLocationsAsNames(result);
+    const finalAllLocationsAsArray = [...allLocationsAsArray].filter(el => el != null);
 
-      let relatedResults =
-        result.locations.length > 0 ? this.findRelatedResults(result, locationsForSelectedResult) : [];
+    let locationsForSelectedResult = this.extractLocationsAsNames(result);
 
-      const finalRelatedResults = [...relatedResults];
+    let relatedResults =
+      result.locations.length > 0 ? this.findRelatedResults(result, locationsForSelectedResult) : [];
 
-      const articles = await getRelatedArticles(this.generateQueryParams(result));
+    const finalRelatedResults = [...relatedResults];
 
-      this.setState({
-        selectedResult: result,
-        articles,
-        relatedResults: {
-          total: finalRelatedResults.length,
-          data: this.createRelatedChunks(finalRelatedResults)
-        },
-        newsTopicsFilter: '',
-        heatMapData: null,
-        locationNames: locationsForSelectedResult,
-        markerCoordinateArray: finalAllLocationsAsArray
-      });
-    } else {
-      this.setState({
-        markerCoordinateArray: [],
-        selectedResult: null,
-        newsTopicsFilter: '',
-        articles: [],
-        relatedResults: {
-          total: 0,
-          data: []
-        },
-        heatMapData: initialHeatMapData,
-        locationNames: [],
-      });
-    }
+    const articles = await getRelatedArticles(this.generateQueryParams(result));
+
+    this.setState({
+      selectedResult: result,
+      articles,
+      relatedResults: {
+        total: finalRelatedResults.length,
+        data: this.createRelatedChunks(finalRelatedResults)
+      },
+      maxDate: '',
+      minDate: '',
+      newsTopicsFilter: '',
+      heatMapData: null,
+      locationNames: locationsForSelectedResult,
+      markerCoordinateArray: finalAllLocationsAsArray
+    });
   };
 
   render() {
@@ -160,18 +204,63 @@ class PulseContainer extends Component {
       <Container fluid={true}>
         <Row>
           <Col>
-            <div className='mb-4 mt-4'>
-              <Badge className='mb-4' variant="primary">
+            <div className='mt-4 search-filters'>
+              <Badge className='mb-2' variant="primary">
+                Filter data to modify heatmap
+              </Badge>
+
+              <div>
+                <Badge className='mb-3' variant="secondary">
+                  Filter data by publish_date
+                </Badge>
+              </div>
+              <div>
+                <form onSubmit={this.onDateFilterSubmit} style={{ fontSize: '11px'}}>
+                  <label>
+                    Min date
+                    <div>
+                      <input
+                        className='mr-4'
+                        id='minDate'
+                        style={{width: window.innerWidth / 11 + 'px'}}
+                        type='text'
+                        value={this.state.minDate}
+                        placeholder='Enter min date with format YYYY-MM-DD'
+                        onChange={this.onMinDateChange} />
+                    </div>
+                  </label>
+
+                  <label className='mr-2'>
+                    Max date
+                    <div>
+                      <input
+                        id='maxDate'
+                        style={{width: window.innerWidth / 11 + 'px'}}
+                        type='text'
+                        value={this.state.maxDate}
+                        placeholder='Enter min date with format YYYY-MM-DD'
+                        onChange={this.onMaxDateChange}/>
+                    </div>
+                  </label>
+
+                  <input className='ml-3' type='submit' value='Filter by publish_date'/>
+                </form>
+              </div>
+
+
+              <Badge className='mb-4 mt-4' variant="secondary">
                 Filter by news topics and see heat map results
               </Badge>
               <p style={{ fontSize: '11px'}}>
                 Here is the list of news topics.
-                <ul style={{ fontSize: '11px'}}>
-                  <li>[GH] Global Health</li>
-                  <li>[CE] Careers & Education</li>
-                  <li>[FU] Funding</li>
-                  <li>[WS] Water & Sanitation</li>
-                </ul>
+              </p>
+              <ul style={{ fontSize: '11px'}}>
+                <li>[GH] Global Health</li>
+                <li>[CE] Careers & Education</li>
+                <li>[FU] Funding</li>
+                <li>[WS] Water & Sanitation</li>
+              </ul>
+              <p style={{ fontSize: '11px'}}>
                 You can combine them using '/'.
                 Example of correct request: "[GH] Global Health/[WS] Water & Sanitation".
                 See results on heatmap
@@ -179,19 +268,22 @@ class PulseContainer extends Component {
               <div>
                 <form onSubmit={this.onNewsTopicsSubmit} style={{ fontSize: '11px'}}>
                   <input
-                    style={{width: this.formWidth + 'px'}}
+                    style={{width: window.innerWidth / 3 + 'px'}}
                     type='text'
                     value={this.state.newsTopicsFilter}
-                    placeholder='Enter full name of one or mutlipe news topics'
+                    placeholder='Enter full name of one or multipe news topics (separated by /)'
                     onChange={this.onNewsTopicsChange} />
-                  <input type='submit' />
+                  <div className='mt-3'>
+                    <input type='submit' value='Filter by news_topics' />
+                  </div>
                 </form>
               </div>
             </div>
 
             <List
               data={this.data}
-              setResult={this.setResult.bind(this)}
+              undoSelectedResult={this.undoSelectedResult.bind(this)}
+              selectResult={this.selectResult.bind(this)}
               selectedResult={this.state.selectedResult}>
             </List>
             <RelatedResults
@@ -207,7 +299,6 @@ class PulseContainer extends Component {
               data={this.data}
               markerCoordinateArray={this.state.markerCoordinateArray}
               mapboxApiAccessToken={this.state.mapboxApiAccessToken}
-              setResult={this.setResult.bind(this)}
               selectedResult={this.state.selectedResult}>
             </Map>
           </Col>

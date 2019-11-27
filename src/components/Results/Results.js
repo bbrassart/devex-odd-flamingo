@@ -7,17 +7,12 @@ import Button from 'react-bootstrap/Button';
 class Results extends Component {
   constructor(props) {
     super(props);
-    this.handleSelectionChange = this.handleSelectionChange.bind(this);
-    this.undoSelection = this.undoSelection.bind(this);
+    this.selectResult = this.selectResult.bind(this);
     this.selectWidth = (window.innerWidth / 3);
   }
 
-  handleSelectionChange(e) {
-    this.props.setResult(this.props.data[e.target.value]);
-  }
-
-  undoSelection() {
-    this.props.setResult();
+  selectResult(e) {
+    this.props.selectResult(this.props.data[e.target.value]);
   }
 
   render() {
@@ -29,14 +24,14 @@ class Results extends Component {
         {
           this.props.selectedResult &&
           (
-            <Button variant="secondary" size="sm" onClick={this.undoSelection} >
+            <Button variant="secondary" size="sm" onClick={this.props.undoSelectedResult} >
               Undo selection
             </Button>
           )
         }
 
         <div className='mt-2'>
-          <select onChange={this.handleSelectionChange} style={{width: this.selectWidth + 'px', fontSize: '11px'}}>
+          <select onChange={this.selectResult} style={{width: this.selectWidth + 'px', fontSize: '11px'}}>
             { this.props.data.map((option, index) =>
               <option key={index} value={index}>
                 {option.title}
