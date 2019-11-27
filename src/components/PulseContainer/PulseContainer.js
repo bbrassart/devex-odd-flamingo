@@ -15,17 +15,20 @@ import data from '../../datasets/data.js';
 
 // Helpers
 import { getRelatedArticles } from '../../helpers/requests'
-import { generateHeatMapData } from "../../helpers/utils";
+import { generateHeatMapData, sortDatasetBasedOnFilters } from "../../helpers/utils";
+
+const initialHeatMapData = generateHeatMapData(data);
 
 class PulseContainer extends Component {
   constructor(props) {
     super(props);
     this.data = data;
-    this.heatMapData = generateHeatMapData(data);
+    this.sortDatasetBasedOnFilters = sortDatasetBasedOnFilters;
     this.state = {
       markerCoordinateArray: [],
       selectedResult: null,
       articles: [],
+      heatMapData: initialHeatMapData,
       relatedResults: {
         total: 0,
         data: []
@@ -46,14 +49,16 @@ class PulseContainer extends Component {
     const locationNames = locationsForSelectedResult;
     const relatedResults = [];
     locationNames.forEach(locationAsName => {
-      data.forEach(result => {
-        if (selectedResult.title !== result.title && result.locations.length) {
-          if ( this.extractLocationsAsNames(result).has(locationAsName) ) {
-            result.matches_with = locationAsName;
-            relatedResults.push(result);
+      if (locationAsName !== undefined) {
+        data.forEach(result => {
+          if (selectedResult.title !== result.title && result.locations.length) {
+            if ( this.extractLocationsAsNames(result).has(locationAsName) ) {
+              result.matches_with = locationAsName;
+              relatedResults.push(result);
+            }
           }
-        }
-      });
+        });
+      }
     });
     return new Set(relatedResults);
   };
@@ -82,30 +87,45 @@ class PulseContainer extends Component {
   };
 
   async setResult(result) {
-    let allLocationsAsArray =
-      result.locations.length > 0 ? new Set(result.locations.map(loc => loc.location)) : [];
+    if (result) {
+      let allLocationsAsArray =
+        result.locations.length > 0 ? new Set(result.locations.map(loc => loc.location)) : [];
 
-    const finalAllLocationsAsArray = [...allLocationsAsArray].filter(el => el != null);
+      const finalAllLocationsAsArray = [...allLocationsAsArray].filter(el => el != null);
 
-    let locationsForSelectedResult = this.extractLocationsAsNames(result);
+      let locationsForSelectedResult = this.extractLocationsAsNames(result);
 
-    let relatedResults =
-      result.locations.length > 0 ? this.findRelatedResults(result, locationsForSelectedResult) : [];
+      let relatedResults =
+        result.locations.length > 0 ? this.findRelatedResults(result, locationsForSelectedResult) : [];
 
-    const finalRelatedResults = [...relatedResults];
+      const finalRelatedResults = [...relatedResults];
 
-    const articles = await getRelatedArticles(this.generateQueryParams(result));
+      const articles = await getRelatedArticles(this.generateQueryParams(result));
 
-    this.setState({
-      selectedResult: result,
-      articles,
-      relatedResults: {
-        total: finalRelatedResults.length,
-        data: this.createRelatedChunks(finalRelatedResults)
-      },
-      locationNames: locationsForSelectedResult,
-      markerCoordinateArray: finalAllLocationsAsArray
-    });
+      this.setState({
+        selectedResult: result,
+        articles,
+        relatedResults: {
+          total: finalRelatedResults.length,
+          data: this.createRelatedChunks(finalRelatedResults)
+        },
+        heatMapData: null,
+        locationNames: locationsForSelectedResult,
+        markerCoordinateArray: finalAllLocationsAsArray
+      });
+    } else {
+      this.setState({
+        markerCoordinateArray: [],
+        selectedResult: null,
+        articles: [],
+        relatedResults: {
+          total: 0,
+          data: []
+        },
+        heatMapData: initialHeatMapData,
+        locationNames: [],
+      });
+    }
   };
 
   render() {
@@ -127,7 +147,7 @@ class PulseContainer extends Component {
           </Col>
           <Col>
             <Map
-              heatMapData={this.heatMapData}
+              heatMapData={this.state.heatMapData}
               data={this.data}
               markerCoordinateArray={this.state.markerCoordinateArray}
               mapboxApiAccessToken={this.state.mapboxApiAccessToken}

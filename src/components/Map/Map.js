@@ -37,7 +37,7 @@ class Map extends Component {
             <Layer {...heatmapLayer} />
           </Source>
         ) }
-        {
+        { !this.props.heatMapData &&
           this.props.markerCoordinateArray.map((locations, index) => {
             return (
               <Marker

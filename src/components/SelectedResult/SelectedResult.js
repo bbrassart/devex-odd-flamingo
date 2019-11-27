@@ -11,20 +11,6 @@ class SelectedResult extends Component {
         { this.props.selectedResult ?
             <>
               <Inspector data={this.props.selectedResult} />
-              <div className='mt-3'>
-                <Badge className='mb-1' variant="secondary">Result locations only</Badge>
-                {
-                  this.props.selectedResult.locations.length ?
-                    <>
-                      {
-                        this.props.selectedResult.locations.map((location, index) => {
-                          return (<Inspector key={index} data={location} />)
-                        })
-                      }
-                    </>
-                    : <p>No locations for this result</p>
-                }
-              </div>
             </>
           :
             <p>No result selected</p>

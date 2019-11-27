@@ -10,6 +10,7 @@ class List extends Component {
         <div className='mt-4'>
           <Results
             setResult={this.props.setResult}
+            selectedResult={this.props.selectedResult}
             data={this.props.data} />
         </div>
         <div className='mt-4'>
