@@ -1,6 +1,8 @@
-var GeoJSON = require('geojson');
+var GeoJSON = require('geojson')
 
-const generateHeatMapData = (data) => {
+const generateHeatMapData = data => GeoJSON.parse(data, {Point: ['lat', 'lng']})
+
+const processAllDataForHeatMap = (data) => {
   const dataToParse = [];
   data.forEach((result) => {
     if(!!Object.keys(result.locations).length) {
@@ -13,7 +15,12 @@ const generateHeatMapData = (data) => {
     }
   });
 
-  return  GeoJSON.parse(dataToParse, {Point: ['lat', 'lng']});
+  return  generateHeatMapData(dataToParse);
+}
+
+const processPartialDataForHeatMap = (data, filters) => {
+  const filteredData = filterDatasetForHeatMap(data, filters)
+  return generateHeatMapData(filteredData)
 };
 
 /**
@@ -23,34 +30,42 @@ const generateHeatMapData = (data) => {
  * @returns {object} Filtered data
  */
 
-const sortDatasetBasedOnFilters = (data, filters) => {
+const filterDatasetForHeatMap = (data, filters) => {
   if(!filters.length) {
     return data;
   }
   const filteredResults = [];
   filters.forEach(filterObj => {
     data.forEach(result => {
-      const filterName = Object.keys(filterObj)[0];
-      if(
-        !!Object.keys(result[filterName]).length
-      ) {
-        if(matchesWithLocationFilter(result, filterObj[filterName])) {
-          filteredResults.push(result)
-        }
+      const filterName = Object.keys(filterObj)[0]
+      if( !!Object.keys(result[filterName]).length ) {
+        const downcasedFilters = filterObj[filterName].map(ele => ele.toLowerCase())
+        result[filterName].forEach(newsTopic => {
+          if (
+            !!newsTopic.name &&
+            downcasedFilters.includes(newsTopic.name.toLowerCase())
+          ) {
+            if(
+              result.locations.length
+            ) {
+              result.locations.forEach(location => {
+                if(!!location && !!location.location) {
+                  filteredResults.push(location.location)
+                }
+
+              });
+            }
+          }
+        });
       }
     })
-  });
-
-  return filteredResults;
-};
-
-const matchesWithLocationFilter = (result, arrayOfLocationFilter) => {
-  const downcasedFilters = arrayOfLocationFilter.map(ele => ele.toLowerCase())
-  return result.locations.some(loc => !!loc && downcasedFilters.includes(loc.name.toLowerCase()));
-};
+  })
+  return filteredResults
+}
 
 export {
-  generateHeatMapData,
-  sortDatasetBasedOnFilters
-};
+  processAllDataForHeatMap,
+  filterDatasetForHeatMap,
+  processPartialDataForHeatMap
+}
 

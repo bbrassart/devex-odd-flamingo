@@ -1,48 +1,58 @@
-import { sortDatasetBasedOnFilters } from './utils'
+import { filterDatasetForHeatMap } from './utils'
 
-describe('#sortDatasetBasedOnFilters', () => {
+describe('#filterDatasetForHeatMap', () => {
 
-  const resultWithAustriaLocation = {
+  const resultWithFundingNewsTopic = {
+    news_topics: [ { name: '[FU] Funding' } ],
     locations: [
-      undefined,
       {
-        name: 'Austria',
-        location: {
-          lat: 47.516321,
-          lng: 14.55072
-        }
+        location: { lat: 123, lng: 456}
+      },
+      {
+        location: { lat: 789, lng: 1012}
       }
     ]
   }
 
   describe('when filters arg is an empty', () => {
     it('directly spits out the same data arg', () => {
-      const data = [ resultWithAustriaLocation ];
-      expect(sortDatasetBasedOnFilters(data, [])).toEqual(data)
+      const data = [ resultWithFundingNewsTopic ];
+      expect(filterDatasetForHeatMap(data, [])).toEqual(data)
     })
   })
 
-  describe('when a location filter is present', () => {
+  describe('when a news_topics filter is present', () => {
     const data = [
-      resultWithAustriaLocation,
-      { locations: [ { name: 'France' } ] },
-      { locations: [ { name: 'Spain' } ] }
+      resultWithFundingNewsTopic,
+      {
+        news_topics: [{ name: '[GH] Global Health' }],
+        locations: []
+      },
+      {
+        news_topics: [{ name: '[WS] Water & Sanitation' }],
+        locations: []
+      }
     ];
-    describe('when there is a location filter has lowercase country names', () => {
+    describe('when there is a news_topics filter that has lowercase', () => {
       it('filters the data', () => {
-        const filters = [ { locations: ['austria', 'spain'] } ];
-        const expectedResult = [resultWithAustriaLocation, { locations: [ { name: 'Spain' } ] }];
-
-        expect(sortDatasetBasedOnFilters(data, filters)).toEqual(expectedResult)
+        const filters = [ { news_topics: ['[FU] Funding']} ];
+        const expectedResult = [
+          resultWithFundingNewsTopic.locations[0].location,
+          resultWithFundingNewsTopic.locations[1].location
+        ];
+        expect(filterDatasetForHeatMap(data, filters)).toEqual(expectedResult)
       })
     })
 
     describe('when there is a location filter has uppercase country names', () => {
       it('filters the data', () => {
-        const filters = [ { locations: ['AUSTRIA', 'Spain'] } ];
-        const expectedResult = [resultWithAustriaLocation, { locations: [ { name: 'Spain' } ] }];
+        const filters = [ { news_topics: ['[FU] FUNDING'] } ];
+        const expectedResult = [
+          resultWithFundingNewsTopic.locations[0].location,
+          resultWithFundingNewsTopic.locations[1].location
+        ];
 
-        expect(sortDatasetBasedOnFilters(data, filters)).toEqual(expectedResult)
+        expect(filterDatasetForHeatMap(data, filters)).toEqual(expectedResult)
       })
     })
   })

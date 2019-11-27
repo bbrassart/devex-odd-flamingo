@@ -10,24 +10,28 @@ import Articles from '../Articles/Articles';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Badge from 'react-bootstrap/Badge';
 // Data imports
 import data from '../../datasets/data.js';
 
 // Helpers
 import { getRelatedArticles } from '../../helpers/requests'
-import { generateHeatMapData, sortDatasetBasedOnFilters } from "../../helpers/utils";
+import { processAllDataForHeatMap, processPartialDataForHeatMap } from "../../helpers/utils";
 
-const initialHeatMapData = generateHeatMapData(data);
+const initialHeatMapData = processAllDataForHeatMap(data);
 
 class PulseContainer extends Component {
   constructor(props) {
     super(props);
+    this.formWidth = (window.innerWidth / 3);
     this.data = data;
-    this.sortDatasetBasedOnFilters = sortDatasetBasedOnFilters;
+    this.onNewsTopicsChange = this.onNewsTopicsChange.bind(this);
+    this.onNewsTopicsSubmit = this.onNewsTopicsSubmit.bind(this);
     this.state = {
       markerCoordinateArray: [],
       selectedResult: null,
       articles: [],
+      newsTopicsFilter: '',
       heatMapData: initialHeatMapData,
       relatedResults: {
         total: 0,
@@ -36,6 +40,27 @@ class PulseContainer extends Component {
       locationNames: [],
       mapboxApiAccessToken: "pk.eyJ1IjoiYmJyYXNzYXJ0IiwiYSI6IjU2MTZjMjRmMjE2MmE4M2Q0OWEwMDVkYTc5YzM3M2Y3In0.V44T7lzZarK4_QwAwoEClw"
     };
+  }
+
+  onNewsTopicsChange(event) {
+    this.setState({newsTopicsFilter: event.target.value});
+  }
+
+  onNewsTopicsSubmit(event) {
+    event.preventDefault();
+    const filters = [{ news_topics: this.state.newsTopicsFilter.split('/') }]
+    this.setState({
+      markerCoordinateArray: [],
+      selectedResult: null,
+      articles: [],
+      relatedResults: {
+        total: 0,
+        data: []
+      },
+      heatMapData: processPartialDataForHeatMap(this.data, filters),
+      locationNames: [],
+    });
+
   }
 
   extractLocationsAsNames(result) {
@@ -109,6 +134,7 @@ class PulseContainer extends Component {
           total: finalRelatedResults.length,
           data: this.createRelatedChunks(finalRelatedResults)
         },
+        newsTopicsFilter: '',
         heatMapData: null,
         locationNames: locationsForSelectedResult,
         markerCoordinateArray: finalAllLocationsAsArray
@@ -117,6 +143,7 @@ class PulseContainer extends Component {
       this.setState({
         markerCoordinateArray: [],
         selectedResult: null,
+        newsTopicsFilter: '',
         articles: [],
         relatedResults: {
           total: 0,
@@ -133,6 +160,35 @@ class PulseContainer extends Component {
       <Container fluid={true}>
         <Row>
           <Col>
+            <div className='mb-4 mt-4'>
+              <Badge className='mb-4' variant="primary">
+                Filter by news topics and see heat map results
+              </Badge>
+              <p style={{ fontSize: '11px'}}>
+                Here is the list of news topics.
+                <ul style={{ fontSize: '11px'}}>
+                  <li>[GH] Global Health</li>
+                  <li>[CE] Careers & Education</li>
+                  <li>[FU] Funding</li>
+                  <li>[WS] Water & Sanitation</li>
+                </ul>
+                You can combine them using '/'.
+                Example of correct request: "[GH] Global Health/[WS] Water & Sanitation".
+                See results on heatmap
+              </p>
+              <div>
+                <form onSubmit={this.onNewsTopicsSubmit} style={{ fontSize: '11px'}}>
+                  <input
+                    style={{width: this.formWidth + 'px'}}
+                    type='text'
+                    value={this.state.newsTopicsFilter}
+                    placeholder='Enter full name of one or mutlipe news topics'
+                    onChange={this.onNewsTopicsChange} />
+                  <input type='submit' />
+                </form>
+              </div>
+            </div>
+
             <List
               data={this.data}
               setResult={this.setResult.bind(this)}
