@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/devex-odd-flamingo/static/css/main.3d4fcbb5.chunk.css",
-    "main.js": "/devex-odd-flamingo/static/js/main.4fcb4db9.chunk.js",
-    "main.js.map": "/devex-odd-flamingo/static/js/main.4fcb4db9.chunk.js.map",
+    "main.js": "/devex-odd-flamingo/static/js/main.6261c85f.chunk.js",
+    "main.js.map": "/devex-odd-flamingo/static/js/main.6261c85f.chunk.js.map",
     "runtime-main.js": "/devex-odd-flamingo/static/js/runtime-main.2140a4f0.js",
     "runtime-main.js.map": "/devex-odd-flamingo/static/js/runtime-main.2140a4f0.js.map",
     "static/css/2.0624914a.chunk.css": "/devex-odd-flamingo/static/css/2.0624914a.chunk.css",
-    "static/js/2.83bdfe12.chunk.js": "/devex-odd-flamingo/static/js/2.83bdfe12.chunk.js",
-    "static/js/2.83bdfe12.chunk.js.map": "/devex-odd-flamingo/static/js/2.83bdfe12.chunk.js.map",
+    "static/js/2.31a4d899.chunk.js": "/devex-odd-flamingo/static/js/2.31a4d899.chunk.js",
+    "static/js/2.31a4d899.chunk.js.map": "/devex-odd-flamingo/static/js/2.31a4d899.chunk.js.map",
     "index.html": "/devex-odd-flamingo/index.html",
-    "precache-manifest.1faeb5a60e1281861abc7d8fc2765dcf.js": "/devex-odd-flamingo/precache-manifest.1faeb5a60e1281861abc7d8fc2765dcf.js",
+    "precache-manifest.82db1de3f1da498bd5ecaab21becac61.js": "/devex-odd-flamingo/precache-manifest.82db1de3f1da498bd5ecaab21becac61.js",
     "service-worker.js": "/devex-odd-flamingo/service-worker.js",
     "static/css/2.0624914a.chunk.css.map": "/devex-odd-flamingo/static/css/2.0624914a.chunk.css.map",
     "static/css/main.3d4fcbb5.chunk.css.map": "/devex-odd-flamingo/static/css/main.3d4fcbb5.chunk.css.map",
@@ -18,8 +18,8 @@
   "entrypoints": [
     "static/js/runtime-main.2140a4f0.js",
     "static/css/2.0624914a.chunk.css",
-    "static/js/2.83bdfe12.chunk.js",
+    "static/js/2.31a4d899.chunk.js",
     "static/css/main.3d4fcbb5.chunk.css",
-    "static/js/main.4fcb4db9.chunk.js"
+    "static/js/main.6261c85f.chunk.js"
   ]
 }
