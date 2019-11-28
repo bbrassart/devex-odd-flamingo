@@ -92,8 +92,7 @@ class PulseInjector extends Component {
   }
 
   async componentDidMount() {
-    const hostnameAsArray = window.location.href.split(['url=']);
-    if ( this.hasIncorrectUrlParam(hostnameAsArray) ) {
+    if ( !this.props.incomingUrl ) {
       return null;
     }
 
@@ -101,25 +100,19 @@ class PulseInjector extends Component {
       loading: true
     })
 
-    const url = hostnameAsArray[1];
-
     fetch(
-      'https://cors-anywhere.herokuapp.com/' + url, {
+      'https://cors-anywhere.herokuapp.com/' + this.props.incomingUrl, {
       }
     )
       .then(resp => {
-        console.log(resp);
         return resp.json()
       })
       .then(incomingJson => {
-        console.log('done');
         this.setState({
           loading: false,
           jsonData: JSON.stringify(incomingJson)
         })
 
-
-        console.log(this.state.jsonData);
         this.props.injectData(this.state.jsonData)
       })
   }
@@ -147,7 +140,12 @@ class PulseInjector extends Component {
           spinner
           text='Incoming URL detected. Sit back and relax...'
         >
-          <img src='https://i.pinimg.com/236x/52/bc/39/52bc3928fd63daa22ebfb555f9ae07dd.jpg' />
+          {
+            this.state.loading && (
+              <img src='https://i.pinimg.com/236x/52/bc/39/52bc3928fd63daa22ebfb555f9ae07dd.jpg' />
+            )
+          }
+
         </LoadingOverlay>
         <Container className='mt-4'>
 
