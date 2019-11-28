@@ -11,25 +11,22 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
 import './PulseContainer.css'
-// Data imports
-import data from '../../datasets/data.js';
 
 // Helpers
 import { getRelatedArticles } from '../../helpers/requests'
 import { getHeatMapData, processPartialDataForHeatMap } from "../../helpers/utils";
 
-const initialHeatMapData = getHeatMapData(data);
-
 class PulseContainer extends Component {
   constructor(props) {
     super(props);
-    this.data = data;
-    this.onNewsTopicsChange = this.onNewsTopicsChange.bind(this);
-    this.onNewsTopicsSubmit = this.onNewsTopicsSubmit.bind(this);
-    this.onMaxDateChange = this.onMaxDateChange.bind(this);
-    this.onMinDateChange = this.onMinDateChange.bind(this);
-    this.onDateFilterSubmit = this.onDateFilterSubmit.bind(this);
+    this.backToInjector = this.backToInjector.bind(this)
+    this.onNewsTopicsChange = this.onNewsTopicsChange.bind(this)
+    this.onNewsTopicsSubmit = this.onNewsTopicsSubmit.bind(this)
+    this.onMaxDateChange = this.onMaxDateChange.bind(this)
+    this.onMinDateChange = this.onMinDateChange.bind(this)
+    this.onDateFilterSubmit = this.onDateFilterSubmit.bind(this)
     this.state = {
       markerCoordinateArray: [],
       selectedResult: null,
@@ -37,7 +34,7 @@ class PulseContainer extends Component {
       newsTopicsFilter: '',
       maxDate: '',
       minDate: '',
-      heatMapData: initialHeatMapData,
+      heatMapData: getHeatMapData(this.props.data),
       relatedResults: {
         total: 0,
         data: []
@@ -45,6 +42,10 @@ class PulseContainer extends Component {
       locationNames: [],
       mapboxApiAccessToken: "pk.eyJ1IjoiYmJyYXNzYXJ0IiwiYSI6IjU2MTZjMjRmMjE2MmE4M2Q0OWEwMDVkYTc5YzM3M2Y3In0.V44T7lzZarK4_QwAwoEClw"
     };
+  }
+
+  backToInjector() {
+    this.props.injectData('[]')
   }
 
   onMaxDateChange(event) {
@@ -76,7 +77,7 @@ class PulseContainer extends Component {
         data: []
       },
       newsTopicsFilter: '',
-      heatMapData: processPartialDataForHeatMap(this.data, filters),
+      heatMapData: processPartialDataForHeatMap(this.props.data, filters),
       locationNames: [],
     });
 
@@ -99,7 +100,7 @@ class PulseContainer extends Component {
       },
       maxDate: '',
       minDate: '',
-      heatMapData: processPartialDataForHeatMap(this.data, filters),
+      heatMapData: processPartialDataForHeatMap(this.props.data, filters),
       locationNames: [],
     });
 
@@ -117,7 +118,7 @@ class PulseContainer extends Component {
     const relatedResults = [];
     locationNames.forEach(locationAsName => {
       if (locationAsName !== undefined) {
-        data.forEach(result => {
+        this.props.data.forEach(result => {
           if (selectedResult.title !== result.title && result.locations.length) {
             if ( this.extractLocationsAsNames(result).has(locationAsName) ) {
               result.matches_with = locationAsName;
@@ -163,7 +164,7 @@ class PulseContainer extends Component {
         total: 0,
         data: []
       },
-      heatMapData: initialHeatMapData,
+      heatMapData: getHeatMapData(this.props.data),
       locationNames: [],
     });
   }
@@ -204,6 +205,9 @@ class PulseContainer extends Component {
       <Container fluid={true}>
         <Row>
           <Col>
+            <Button className='mt-4' variant="primary" onClick={this.backToInjector} >
+              Back to injector
+            </Button>
             <div className='mt-4 search-filters'>
               <Badge className='mb-2' variant="primary">
                 Filter data to modify heatmap
@@ -281,7 +285,7 @@ class PulseContainer extends Component {
             </div>
 
             <List
-              data={this.data}
+              data={this.props.data}
               undoSelectedResult={this.undoSelectedResult.bind(this)}
               selectResult={this.selectResult.bind(this)}
               selectedResult={this.state.selectedResult}>
@@ -296,7 +300,7 @@ class PulseContainer extends Component {
           <Col>
             <Map
               heatMapData={this.state.heatMapData}
-              data={this.data}
+              data={this.props.data}
               markerCoordinateArray={this.state.markerCoordinateArray}
               mapboxApiAccessToken={this.state.mapboxApiAccessToken}
               selectedResult={this.state.selectedResult}>

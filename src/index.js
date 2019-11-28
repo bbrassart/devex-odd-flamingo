@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PulseContainer from './components/PulseContainer/PulseContainer';
+import PulseRouter from './components/PulseRouter/PulseRouter';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<PulseContainer />, document.getElementById('root'));
+ReactDOM.render(<PulseRouter />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
