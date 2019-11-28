@@ -3,8 +3,10 @@ import React, { Component } from 'react';
 
 // Styling
 import Container from 'react-bootstrap/Container'
+import LoadingOverlay from 'react-loading-overlay'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Badge from 'react-bootstrap/Badge'
 import ObjectInspector from 'react-inspector'
 
 const showcasedJson = [
@@ -82,10 +84,48 @@ class PulseInjector extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      jsonData: ''
+      jsonData: [],
+      loading: false
     }
     this.submitData = this.submitData.bind(this)
     this.handleInjectedDataChange = this.handleInjectedDataChange.bind(this)
+  }
+
+  async componentDidMount() {
+    const hostnameAsArray = window.location.href.split(['url=']);
+    if ( this.hasIncorrectUrlParam(hostnameAsArray) ) {
+      return null;
+    }
+
+    this.setState({
+      loading: true
+    })
+
+    const url = hostnameAsArray[1];
+
+    fetch(
+      'https://cors-anywhere.herokuapp.com/' + url, {
+      }
+    )
+      .then(resp => {
+        console.log(resp);
+        return resp.json()
+      })
+      .then(incomingJson => {
+        console.log('done');
+        this.setState({
+          loading: false,
+          jsonData: JSON.stringify(incomingJson)
+        })
+
+
+        console.log(this.state.jsonData);
+        this.props.injectData(this.state.jsonData)
+      })
+  }
+
+  hasIncorrectUrlParam(hostnameAsArray) {
+    return hostnameAsArray.length !== 2
   }
 
   submitData(event) {
@@ -101,31 +141,41 @@ class PulseInjector extends Component {
 
   render() {
     return (
-      <Container className='mt-4'>
-        <Row >
-          <Col>
-            <h2 className='m-3'>Copy paste compatible JSON data first</h2>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <form className='m-4' onSubmit={this.submitData}>
+      <>
+        <LoadingOverlay
+          active={this.state.loading}
+          spinner
+          text='Incoming URL detected. Sit back and relax...'
+        >
+          <img src='https://i.pinimg.com/236x/52/bc/39/52bc3928fd63daa22ebfb555f9ae07dd.jpg' />
+        </LoadingOverlay>
+        <Container className='mt-4'>
+
+          <Row >
+            <Col>
+              <h2 className='m-3'>Copy paste JSON data</h2>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <div><Badge className='m-4' variant='primary'>Copy paste JSON data</Badge></div>
+              <form className='m-4' onSubmit={this.submitData}>
               <textarea
                 style={{width: window.innerWidth / 4 + 'px', height: window.innerWidth / 4 + 'px'}}
                 placeholder='Insert your JSON data here'
                 onChange={this.handleInjectedDataChange} />
                 <div className='mt-3'>
-                  <input type='submit' value='Inject JSON data' />
+                  <input type='submit' value='Inject JSON data' disabled={!this.state.jsonData.length}/>
                 </div>
-            </form>
-          </Col>
-        </Row>
-      <Row className='mt-5'>
-        <p>Example of compatible JSON data</p>
-        <ObjectInspector data={showcasedJson} expandLevel={10}/>
-      </Row>
-      </Container>
-
+              </form>
+            </Col>
+          </Row>
+          <Row className='mt-5'>
+            <p>Example of compatible JSON data</p>
+            <ObjectInspector data={showcasedJson} expandLevel={10}/>
+          </Row>
+        </Container>
+      </>
     )
   }
 }
