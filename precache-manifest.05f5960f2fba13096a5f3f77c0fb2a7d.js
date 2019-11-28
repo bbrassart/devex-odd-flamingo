@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "f757c89c0b4202debd831a6f5191e883",
+    "revision": "2e2f3b3cd161fa669aac7410c0d2a85e",
     "url": "/devex-odd-flamingo/index.html"
   },
   {
-    "revision": "2d735c31e89d75288e65",
+    "revision": "518ec6fc6434694669df",
     "url": "/devex-odd-flamingo/static/css/2.0624914a.chunk.css"
   },
   {
-    "revision": "5eb4d4c93bc2c673abac",
+    "revision": "ffd188ec0a17bd530192",
     "url": "/devex-odd-flamingo/static/css/main.fb289b8b.chunk.css"
   },
   {
-    "revision": "2d735c31e89d75288e65",
-    "url": "/devex-odd-flamingo/static/js/2.e36ca23f.chunk.js"
+    "revision": "518ec6fc6434694669df",
+    "url": "/devex-odd-flamingo/static/js/2.bcd904ea.chunk.js"
   },
   {
-    "revision": "5eb4d4c93bc2c673abac",
-    "url": "/devex-odd-flamingo/static/js/main.ffa55719.chunk.js"
+    "revision": "ffd188ec0a17bd530192",
+    "url": "/devex-odd-flamingo/static/js/main.565f0c9e.chunk.js"
   },
   {
     "revision": "04411e68df7f5e8c7bbb",
