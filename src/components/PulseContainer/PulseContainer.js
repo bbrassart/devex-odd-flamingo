@@ -52,11 +52,13 @@ class PulseContainer extends Component {
       let minIncomingDate = this.props.data[0].publish_date
 
       this.props.data.forEach(result => {
-        if (result.publish_date > maxIncomingDate) {
-          maxIncomingDate = result.publish_date
-        }
-        if(result.publish_date < minIncomingDate) {
-          minIncomingDate = result.publish_date
+        if (!!result.publish_date) {
+          if (result.publish_date > maxIncomingDate) {
+            maxIncomingDate = result.publish_date
+          }
+          if(result.publish_date < minIncomingDate) {
+            minIncomingDate = result.publish_date
+          }
         }
       })
       this.setState({
