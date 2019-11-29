@@ -171,9 +171,8 @@ class PulseInjector extends Component {
             )
           }
         </LoadingOverlay>
-
-        <Container className='mt-4'>
-          <Row>
+        <Container>
+          <Row className='m-5'>
             <Col>
               <div><Badge className='m-4' variant='primary'>Patse #dxy link</Badge></div>
               <form className='m-4' onSubmit={this.submitLink}>
@@ -204,8 +203,10 @@ class PulseInjector extends Component {
             </Col>
           </Row>
           <Row className='mt-5'>
-            <p>Example of compatible JSON data</p>
-            <ObjectInspector data={showcasedJson} expandLevel={10}/>
+            <Col>
+              <p>Example of compatible JSON data</p>
+              <ObjectInspector data={showcasedJson} expandLevel={10}/>
+            </Col>
           </Row>
         </Container>
       </>
