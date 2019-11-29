@@ -85,10 +85,13 @@ class PulseInjector extends Component {
     super(props)
     this.state = {
       jsonData: [],
+      link: '',
       loading: false
     }
     this.submitData = this.submitData.bind(this)
+    this.submitLink = this.submitLink.bind(this)
     this.handleInjectedDataChange = this.handleInjectedDataChange.bind(this)
+    this.handleLinkChange = this.handleLinkChange.bind(this)
   }
 
   async componentDidMount() {
@@ -105,7 +108,12 @@ class PulseInjector extends Component {
       }
     )
       .then(resp => {
-        return resp.json()
+        if (resp.ok) {
+          return resp.json()
+        }
+        alert(`Something went wrong: ${resp.status}: ${resp.statusText}`)
+        return false;
+
       })
       .then(incomingJson => {
         this.setState({
@@ -124,6 +132,19 @@ class PulseInjector extends Component {
   submitData(event) {
     event.preventDefault()
     this.props.injectData(this.state.jsonData)
+  }
+
+  submitLink(event) {
+    event.preventDefault()
+
+    window.href = `${window.location.origin}${window.location.pathname}?url=${this.state.link}`
+
+  }
+
+  handleLinkChange(e) {
+    this.setState({
+      link: e.target.value
+    })
   }
 
   handleInjectedDataChange(e) {
@@ -145,16 +166,23 @@ class PulseInjector extends Component {
               <img src='https://i.pinimg.com/236x/52/bc/39/52bc3928fd63daa22ebfb555f9ae07dd.jpg' />
             )
           }
-
         </LoadingOverlay>
-        <Container className='mt-4'>
 
-          <Row >
-            <Col>
-              <h2 className='m-3'>Copy paste JSON data</h2>
-            </Col>
-          </Row>
+        <Container className='mt-4'>
           <Row>
+            <Col>
+              <div><Badge className='m-4' variant='primary'>Patse #dxy link</Badge></div>
+              <form className='m-4' onSubmit={this.submitLink}>
+              <input
+                type='text'
+                style={{width: window.innerWidth / 4 + 'px'}}
+                placeholder='Paste your #dxy link here'
+                onChange={this.handleLinkChange} />
+                <div className='mt-3'>
+                  <input type='submit' value='Load results from link' disabled={!this.state.link.length}/>
+                </div>
+              </form>
+            </Col>
             <Col>
               <div><Badge className='m-4' variant='primary'>Copy paste JSON data</Badge></div>
               <form className='m-4' onSubmit={this.submitData}>
@@ -163,7 +191,9 @@ class PulseInjector extends Component {
                 placeholder='Insert your JSON data here'
                 onChange={this.handleInjectedDataChange} />
                 <div className='mt-3'>
-                  <input type='submit' value='Inject JSON data' disabled={!this.state.jsonData.length}/>
+                  <input
+                    type='submit' value='Import JSON data'
+                    disabled={!this.state.jsonData.length}/>
                 </div>
               </form>
             </Col>
