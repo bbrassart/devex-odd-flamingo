@@ -137,7 +137,7 @@ class PulseInjector extends Component {
   submitLink(event) {
     event.preventDefault()
 
-    window.href = `${window.location.origin}${window.location.pathname}?url=${this.state.link}`
+    window.location.href = `${window.location.origin}${window.location.pathname}?url=${this.state.link}`
 
   }
 
@@ -177,6 +177,7 @@ class PulseInjector extends Component {
                 type='text'
                 style={{width: window.innerWidth / 4 + 'px'}}
                 placeholder='Paste #dxy link here'
+                value={this.state.link}
                 onChange={this.handleLinkChange} />
                 <div className='mt-3'>
                   <input type='submit' value='Load results from link' disabled={!this.state.link.length}/>

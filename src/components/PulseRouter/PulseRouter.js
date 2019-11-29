@@ -14,10 +14,9 @@ class PulseRouter extends Component {
   }
 
   getUrlParam() {
-    const urlAsArray = window.location.href.split('?/url=');
+    const urlAsArray = window.location.href.split('/?url=');
     return urlAsArray[1] ? urlAsArray[1] : null
   }
-
 
   injectData(injectedData) {
     this.setState({
