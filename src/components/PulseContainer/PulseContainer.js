@@ -39,9 +39,31 @@ class PulseContainer extends Component {
         total: 0,
         data: []
       },
+      maxIncomingDate: '',
+      minIncomingDate: '',
       locationNames: [],
       mapboxApiAccessToken: "pk.eyJ1IjoiYmJyYXNzYXJ0IiwiYSI6IjU2MTZjMjRmMjE2MmE4M2Q0OWEwMDVkYTc5YzM3M2Y3In0.V44T7lzZarK4_QwAwoEClw"
     };
+  }
+
+  componentDidMount() {
+    if (this.props.data.length) {
+      let maxIncomingDate = this.props.data[0].publish_date
+      let minIncomingDate = this.props.data[0].publish_date
+
+      this.props.data.forEach(result => {
+        if (result.publish_date > maxIncomingDate) {
+          maxIncomingDate = result.publish_date
+        }
+        if(result.publish_date < minIncomingDate) {
+          minIncomingDate = result.publish_date
+        }
+      })
+      this.setState({
+        maxIncomingDate: maxIncomingDate,
+        minIncomingDate: minIncomingDate
+      })
+    }
   }
 
   backToInjector() {
@@ -221,7 +243,7 @@ class PulseContainer extends Component {
               <div>
                 <form onSubmit={this.onDateFilterSubmit} style={{ fontSize: '11px'}}>
                   <label>
-                    Min date
+                    Min date in dataset: {this.state.minIncomingDate}
                     <div>
                       <input
                         className='mr-4'
@@ -235,7 +257,7 @@ class PulseContainer extends Component {
                   </label>
 
                   <label className='mr-2'>
-                    Max date
+                    Max date in dataset: {this.state.maxIncomingDate}
                     <div>
                       <input
                         id='maxDate'
