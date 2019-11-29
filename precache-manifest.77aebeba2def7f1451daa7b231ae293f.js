@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "21f4bdb5bf74326c200ff10206fc1048",
+    "revision": "c614bef78cd7147204b1c351163a559c",
     "url": "/devex-odd-flamingo/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/devex-odd-flamingo/static/css/2.0624914a.chunk.css"
   },
   {
-    "revision": "07d2d2fad64dad6fc9d5",
+    "revision": "6113359db0227b631300",
     "url": "/devex-odd-flamingo/static/css/main.fb289b8b.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/devex-odd-flamingo/static/js/2.dba88a5e.chunk.js"
   },
   {
-    "revision": "07d2d2fad64dad6fc9d5",
-    "url": "/devex-odd-flamingo/static/js/main.568c629b.chunk.js"
+    "revision": "6113359db0227b631300",
+    "url": "/devex-odd-flamingo/static/js/main.272a84b6.chunk.js"
   },
   {
     "revision": "04411e68df7f5e8c7bbb",
