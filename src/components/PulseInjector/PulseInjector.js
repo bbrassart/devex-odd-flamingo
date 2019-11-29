@@ -111,7 +111,7 @@ class PulseInjector extends Component {
         if (resp.ok) {
           return resp.json()
         }
-        alert(`Something went wrong: ${resp.status}: ${resp.statusText}`)
+        alert(`Something went wrong: ${resp.status}: ${resp.statusText}. Token is probably expired`)
         return false;
 
       })
@@ -122,6 +122,10 @@ class PulseInjector extends Component {
         })
 
         this.props.injectData(this.state.jsonData)
+      }).
+      catch(e => {
+        alert(`Something went wrong: ${e}`)
+        return false;
       })
   }
 
