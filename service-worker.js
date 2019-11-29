@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/devex-odd-flamingo/precache-manifest.56af7c2ebf270f2cc0b12f0f92476ad1.js"
+  "/devex-odd-flamingo/precache-manifest.188615e01ff2bede02354a2b5ffc0d89.js"
 );
 
 self.addEventListener('message', (event) => {
