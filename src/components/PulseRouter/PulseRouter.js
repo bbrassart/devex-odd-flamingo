@@ -27,7 +27,7 @@ class PulseRouter extends Component {
   render() {
     return (
       <>
-        { this.state.data.length ? (<PulseContainer injectData={this.injectData} data={this.state.data} />) : (<PulseInjector incomingUrl={this.url} injectData={this.injectData} />) }
+        { this.state.data.length ? (<PulseContainer data={this.state.data} />) : (<PulseInjector incomingUrl={this.url} injectData={this.injectData} />) }
       </>
     )
   }

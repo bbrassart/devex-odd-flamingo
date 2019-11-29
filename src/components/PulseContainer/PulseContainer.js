@@ -45,7 +45,7 @@ class PulseContainer extends Component {
   }
 
   backToInjector() {
-    this.props.injectData('[]')
+    window.location.href = `${window.location.origin}${window.location.pathname}`
   }
 
   onMaxDateChange(event) {
@@ -210,12 +210,12 @@ class PulseContainer extends Component {
             </Button>
             <div className='mt-4 search-filters'>
               <Badge className='mb-2' variant="primary">
-                Filter data to modify heatmap
+                Heatmap filters
               </Badge>
 
               <div>
                 <Badge className='mb-3' variant="secondary">
-                  Filter data by publish_date
+                  Filter by publish_date
                 </Badge>
               </div>
               <div>
@@ -253,7 +253,7 @@ class PulseContainer extends Component {
 
 
               <Badge className='mb-4 mt-4' variant="secondary">
-                Filter by news topics and see heat map results
+                Filter by news topics
               </Badge>
               <p style={{ fontSize: '11px'}}>
                 Here is the list of news topics.

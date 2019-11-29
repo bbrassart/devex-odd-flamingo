@@ -19,7 +19,7 @@ class Results extends Component {
     return (
       <div>
         <Badge className='mb-1 mr-3' variant="primary">
-          Choose a result to see locations on map, related results and articles
+          Select result to see its locations on map, related results and articles
         </Badge>
         {
           this.props.selectedResult &&

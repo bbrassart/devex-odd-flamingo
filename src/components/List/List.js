@@ -7,7 +7,7 @@ class List extends Component {
   render() {
     return (
       <div>
-        <div className='mt-4'>
+        <div className='mt-3'>
           <Results
             undoSelectedResult={this.props.undoSelectedResult}
             selectResult={this.props.selectResult}
