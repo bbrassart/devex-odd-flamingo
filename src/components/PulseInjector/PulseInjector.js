@@ -176,7 +176,7 @@ class PulseInjector extends Component {
               <input
                 type='text'
                 style={{width: window.innerWidth / 4 + 'px'}}
-                placeholder='Paste your #dxy link here'
+                placeholder='Paste #dxy link here'
                 onChange={this.handleLinkChange} />
                 <div className='mt-3'>
                   <input type='submit' value='Load results from link' disabled={!this.state.link.length}/>
