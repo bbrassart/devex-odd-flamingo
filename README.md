@@ -1,5 +1,7 @@
 ## Devex Odd Flamingo ReactJS application
 
+![Screenshot](https://i.imgur.com/RtnKY3x.png)
+
 I created this ReactJS application during a Hackathon week at [Devex](https://devex.com).
 This straight-forward application aims to be a tool for our Development Analytics team to visualize big sets of JSON data.
 We would usually store those files in a regular Amazon S3 buckets, hence the copy/pasting a link feature.
