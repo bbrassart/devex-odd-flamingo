@@ -4,7 +4,7 @@ I created this ReactJS application during a Hackathon week at [Devex](https://de
 This straight-forward application aims to be a tool for our Development Analytics team to visualize big sets of JSON data.
 We would usually store those files in a regular Amazon S3 buckets, hence the copy/pasting a link feature.
 If you do not have access to such JSON data, you can still copy paste the example present in the injector.
-It is a proof concept so it needs to be polished and better tested. 
+It is a proof concept so it would need to be polished, maintained and better tested. 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
